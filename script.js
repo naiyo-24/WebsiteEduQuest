@@ -36,7 +36,7 @@ const opportunities = {
             duration: '3 months'
         },
         { 
-            title: 'Graphics Designing Intern',
+            title: 'Graphics Designing & Editing Intern',
             company: 'Naiyo24 Pvt. Ltd.',
             location: 'On-Site/Remote',
             type: 'internship',
@@ -44,7 +44,7 @@ const opportunities = {
             duration: '3 months'
         },
         { 
-            title: 'Digital Marketing Intern',
+            title: 'Digital & Social Media Marketing Intern',
             company: 'Naiyo24 Pvt. Ltd.',
             location: 'On-Site/Remote',
             type: 'internship',
@@ -78,7 +78,7 @@ const opportunities = {
             experience: 'Freshers'
         },
         {
-            title: 'Content Writer/Marketer',
+            title: 'Content Writer and Marketer',
             company: 'Naiyo24 Pvt. Ltd.',
             location: 'Kolkata',
             type: 'job',
@@ -97,8 +97,11 @@ const opportunities = {
     ]
 };
 
+// Remove form submission code and refactor opportunities loader
 function loadOpportunities(filter = 'all') {
     const container = document.querySelector('.opportunities-grid');
+    if (!container) return;
+
     const allOpportunities = [...opportunities.internships, ...opportunities.jobs];
     
     const filteredOpportunities = filter === 'all' 
@@ -106,7 +109,7 @@ function loadOpportunities(filter = 'all') {
         : allOpportunities.filter(opp => opp.type === filter);
 
     const opportunitiesHTML = filteredOpportunities.map((opp, index) => `
-        <div class="opportunity-card fade-in" style="animation-delay: ${index * 0.1}s">
+        <div class="opportunity-card" style="--animation-order: ${index}">
             <span class="opportunity-tag">${opp.type === 'internship' ? 'Internship' : 'Job'}</span>
             <h3 class="text-primary">${opp.title}</h3>
             <p class="text-muted mb-2">${opp.company} - ${opp.location}</p>
@@ -122,8 +125,10 @@ function loadOpportunities(filter = 'all') {
     container.innerHTML = opportunitiesHTML;
 }
 
+// Enhanced opportunity tab initialization
 function initializeOpportunityTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
+    if (!tabBtns.length) return;
     
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -132,6 +137,9 @@ function initializeOpportunityTabs() {
             loadOpportunities(btn.dataset.tab);
         });
     });
+
+    // Load initial opportunities
+    loadOpportunities('all');
 }
 
 // Team carousel data with correct image paths
@@ -205,49 +213,6 @@ function initTeamCarousel() {
         }, 100);
     }
 }
-
-// Form submission
-document.getElementById('feedbackForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        name: document.getElementById('nameInput').value,
-        email: document.getElementById('emailInput').value,
-        message: document.getElementById('messageInput').value
-    };
-
-    // Show loading state
-    const submitBtn = this.querySelector('.submit-btn');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
-    submitBtn.disabled = true;
-
-    fetch('http://localhost:5000/send-feedback', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Thank you for your feedback!');
-            this.reset();
-        } else {
-            alert('Error sending feedback. Please try again.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error sending feedback. Please try again.');
-    })
-    .finally(() => {
-        // Reset button state
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    });
-});
 
 // Add intersection observer for animations
 const observerOptions = {
@@ -622,6 +587,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // ...existing initialization code...
+    
+    // Handle all download buttons and store badges
+    const downloadButtons = document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn, .store-badge');
+    const comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
+    
+    downloadButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            comingSoonModal.show();
+        });
+    });
+
+    // ...existing code...
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
 
     // Handle all download buttons
     const downloadButtons = document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn');
@@ -753,20 +735,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Hero section animations
+// Hero section - simplified
 document.addEventListener('DOMContentLoaded', function() {
     const hero = document.querySelector('.hero');
     const heroWrapper = document.querySelector('.hero-wrapper');
 
-    // Click animation
-    hero.addEventListener('click', function() {
-        hero.classList.add('active');
-        setTimeout(() => {
-            hero.classList.remove('active');
-        }, 300);
-    });
-
-    // Scroll animation
     const observerOptions = {
         threshold: 0.1
     };
@@ -780,17 +753,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     observer.observe(heroWrapper);
-
-    // Parallax effect on scroll
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * 0.5;
-        
-        if (scrolled < heroWrapper.offsetHeight) {
-            hero.style.transform = `translate3d(0, 0, 0) scale(${1 - scrolled/3000})`;
-            hero.style.borderRadius = `0 0 ${scrolled/5 + 30}px ${scrolled/5 + 30}px`;
-        }
-    });
 });
 
 // ...existing code...
