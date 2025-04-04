@@ -595,7 +595,13 @@ document.addEventListener('DOMContentLoaded', function() {
     downloadButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
+            const currentScrollPosition = window.scrollY;
             comingSoonModal.show();
+
+            // Restore scroll position after modal is closed
+            document.getElementById('comingSoonModal').addEventListener('hidden.bs.modal', () => {
+                window.scrollTo(0, currentScrollPosition);
+            }, { once: true });
         });
     });
 
