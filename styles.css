@@ -31,15 +31,15 @@ body {
     right: 0;
     width: 100%;
     z-index: 1030;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(10px);
-    padding: 0.5rem 2rem; /* Reduced from 1rem */
+    padding: 0.5rem 2rem;
     transition: transform 0.3s ease-in-out,
-                background-color 0.3s ease-in-out,
                 box-shadow 0.3s ease-in-out,
                 padding 0.3s ease-in-out;
     border-radius: 0 0 30px 30px;
     transform: translateY(0);
+    box-shadow: 0 2px 20px rgba(26, 115, 232, 0.15);
 }
 
 .navbar.hidden {
@@ -49,54 +49,42 @@ body {
 }
 
 .navbar.scrolled {
-    padding: 0.4rem 2rem; /* Reduced from 0.8rem */
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 2px 20px rgba(26, 115, 232, 0.15);
-    transition: transform 0.3s ease-in-out,
-                background-color 0.3s ease-in-out,
-                box-shadow 0.3s ease-in-out,
-                padding 0.3s ease-in-out;
+    padding: 0.4rem 2rem;
 }
 
-.navbar.color-change {
-    background: var(--navbar-bg-scrolled);
-    box-shadow: 0 2px 20px rgba(26, 115, 232, 0.25);
+.navbar .nav-link,
+.navbar .brand-text,
+.navbar .brand-highlight,
+.navbar .brand-number {
+    color: var(--text-color) !important;
 }
 
-.navbar.color-change .nav-link,
-.navbar.color-change .brand-text,
-.navbar.color-change .brand-highlight,
-.navbar.color-change .brand-number {
-    color: white !important; /* Added !important */
+.navbar .hamburger-icon span {
+    background: var(--primary-color) !important;
 }
 
-.navbar.color-change .hamburger-icon span {
-    background: white !important; /* Added !important */
+.navbar .nav-link::before {
+    background: var(--primary-color) !important;
 }
 
-.navbar.color-change .nav-link::before,
-.navbar.color-change .nav-link::after {  /* Added ::after */
-    background: white !important; /* Added !important */
-}
-
-/* Service Pages Blue Navbar */
+/* Service Pages Navbar */
 .navbar.service-navbar {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: rgba(255, 255, 255, 0.98) !important;
 }
 
 .navbar.service-navbar .nav-link,
 .navbar.service-navbar .brand-text,
 .navbar.service-navbar .brand-highlight,
 .navbar.service-navbar .brand-number {
-    color: white !important; /* Add !important */
+    color: var(--text-color) !important;
 }
 
 .navbar.service-navbar .hamburger-icon span {
-    background: white !important; /* Add !important */
+    background: var(--primary-color) !important;
 }
 
 .navbar.service-navbar .nav-link::before {
-    background: white !important; /* Add !important */
+    background: var(--primary-color) !important;
 }
 
 .navbar-brand {
@@ -236,13 +224,14 @@ body {
     }
 
     .navbar-collapse {
+        background: var(--white) !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         position: fixed;
         top: 60px; /* Reduced from 76px to match new navbar height */
         left: 0;
         right: 0;
         margin: 0;
         padding: 0.8rem 0; /* Reduced from 1rem */
-        background: var(--primary-color) !important;
         backdrop-filter: blur(10px);
         transition: all 0.3s ease-in-out;
         opacity: 1;  /* Changed from 0 */
@@ -264,30 +253,30 @@ body {
     }
 
     .navbar.service-navbar .navbar-collapse {
-        background: var(--primary-color) !important; /* Ensure service navbar has primary color */
+        background: var(--white) !important;
     }
 
     .navbar.service-navbar .nav-link {
-        color: white !important; /* Force white color in service navbar */
+        color: var(--text-color) !important;
     }
 
     .navbar.color-change .nav-link {
-        color: white !important;
+        color: var(--text-color) !important;
     }
 
     .navbar.color-change .navbar-collapse {
-        background: var(--primary-color) !important;
+        background: var(--white) !important;
     }
 
     .navbar.color-change .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
+        background: rgba(26, 115, 232, 0.1) !important;
+        color: var(--text-color) !important;
     }
 
     .nav-link {
         padding: 0.8rem 1.2rem;
         text-align: center;
-        color: white !important; /* Force white color */
+        color: var(--text-color) !important;
         transition: all 0.3s ease;
     }
 
@@ -296,7 +285,7 @@ body {
     }
 
     .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1) !important; /* Light hover effect */
+        background: rgba(26, 115, 232, 0.1) !important;
         border-radius: var(--border-radius-sm);
     }
 
@@ -505,7 +494,7 @@ section {
 .service-card .download-btn {
     background: var(--primary-color);
     color: white;
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;  /* Increased padding */
     border-radius: var(--border-radius-full);
     text-decoration: none;
     font-weight: 500;
@@ -572,21 +561,18 @@ section {
 .download-btn {
     background: var(--primary-color);
     color: var(--white);
-    border: none;
-    padding: 12px 30px;
+    padding: 1rem 2rem;  /* Increased padding */
     border-radius: var(--border-radius-full);
-    cursor: pointer;
+    text-decoration: none;
     font-weight: 500;
-    box-shadow: 0 2px 5px rgba(26, 115, 232, 0.2);
-    transition: background 0.3s;
-    transform: translateY(0);
+    transition: all 0.4s ease;
+    display: inline-block;
+    border: 2px solid transparent;
 }
 
 .download-btn:hover {
-    background: var(--accent-color);
-    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(26, 115, 232, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(26, 115, 232, 0.2);
 }
 
 .nav-tabs {
@@ -857,12 +843,12 @@ section {
 
 .feedback-container {
     position: relative;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius-lg);
     padding: 3rem;
     box-shadow: 
-        0 20px 40px rgba(26, 115, 232, 0.1),
+        0 20px 40px rgba(26, 115, 232, 0.15),
         inset 0 0 0 1px rgba(255, 255, 255, 0.5);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     transform: translateY(0);
@@ -2835,8 +2821,6 @@ footer ul {
     }
 }
 
-/* ...existing code... */
-
 .download-section {
     position: relative;
     overflow: hidden;
@@ -2875,5 +2859,4 @@ footer ul {
         height: 45px;
     }
 }
-/* ...existing code... */
 

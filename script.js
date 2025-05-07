@@ -379,79 +379,89 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Navbar scroll effect
-    // const navbar = document.querySelector('.navbar'); // Removed duplicate declaration
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('section');
+    const navbar = document.querySelector('.navbar');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    let lastScrollTop = 0;
+    let isMobileMenuOpen = false;
+    
+    // Track mobile menu state
+    if (navbarCollapse) {
+        navbarCollapse.addEventListener('show.bs.collapse', () => {
+            isMobileMenuOpen = true;
+            navbar.classList.remove('hidden');
+        });
 
-    window.addEventListener('scroll', () => {
-        const homeSection = document.querySelector('#home');
-        const scrollPosition = window.scrollY;
-        const navbar = document.querySelector('.navbar');
+        navbarCollapse.addEventListener('hide.bs.collapse', () => {
+            isMobileMenuOpen = false;
+        });
+    }
+
+    function updateNavbar() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Add/remove scrolled class and color-change class
-        if (scrollPosition > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        // Always show navbar at top of page
+        if (currentScrollTop <= 0) {
+            navbar.classList.remove('hidden', 'scrolled');
+            return;
         }
 
-        // Change navbar color after about us section
-        const aboutSection = document.querySelector('#aboutus');
-        if (aboutSection && scrollPosition >= (aboutSection.offsetTop - 100)) {
-            navbar.classList.add('color-change');
-        } else {
-            navbar.classList.remove('color-change');
+        // Add scrolled class when not at top (only affects padding)
+        navbar.classList.add('scrolled');
+
+        // Don't hide navbar if mobile menu is open
+        if (isMobileMenuOpen) {
+            navbar.classList.remove('hidden');
+            return;
         }
 
-        // Update active nav link based on scroll position
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (scrollPosition >= sectionTop - 60) {
-                current = section.getAttribute('id');
-            }
-        });
+        // Handle navbar visibility based on scroll direction
+        if (currentScrollTop > lastScrollTop) {
+            // Scrolling down - hide navbar
+            navbar.classList.add('hidden');
+        } else {
+            // Scrolling up - show navbar
+            navbar.classList.remove('hidden');
+        }
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').substring(1) === current) {
-                link.classList.add('active');
-            }
-        });
+        lastScrollTop = currentScrollTop;
+    }
+
+    // Throttle scroll events
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateNavbar();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+
+    // Initial navbar state
+    updateNavbar();
+
+    // Update on resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 991) {
+            isMobileMenuOpen = false;
+        }
+        updateNavbar();
+    }, { passive: true });
+
+    // Prevent navbar from hiding when interacting with it
+    navbar.addEventListener('mouseenter', () => {
+        navbar.classList.remove('hidden');
     });
 
     // Close mobile menu on link click
+    const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            const navbarCollapse = document.querySelector('.navbar-collapse');
             if (navbarCollapse.classList.contains('show')) {
                 bootstrap.Collapse.getInstance(navbarCollapse).hide();
             }
         });
-    });
-
-    // Add scroll direction detection
-    let lastScroll = 0;
-    const navbar = document.querySelector('.navbar');
-    
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        // Determine scroll direction and toggle navbar
-        if (currentScroll <= 0) {
-            navbar.classList.remove('hidden');
-            return;
-        }
-        
-        if (currentScroll > lastScroll && !navbar.classList.contains('hidden')) {
-            // Scrolling down
-            navbar.classList.add('hidden');
-        } else if (currentScroll < lastScroll && navbar.classList.contains('hidden')) {
-            // Scrolling up
-            navbar.classList.remove('hidden');
-        }
-        
-        lastScroll = currentScroll;
     });
 });
 
@@ -648,94 +658,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ...existing code...
-});
-
-// Remove all previous scroll-related event listeners and replace with this
-document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.querySelector('.navbar');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    let lastScrollTop = 0;
-    let isMobileMenuOpen = false;
-    
-    // Track mobile menu state
-    if (navbarCollapse) {
-        navbarCollapse.addEventListener('show.bs.collapse', () => {
-            isMobileMenuOpen = true;
-            navbar.classList.remove('hidden');
-        });
-
-        navbarCollapse.addEventListener('hide.bs.collapse', () => {
-            isMobileMenuOpen = false;
-        });
-    }
-
-    function updateNavbar() {
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Always show navbar at top of page
-        if (currentScrollTop <= 0) {
-            navbar.classList.remove('hidden', 'scrolled');
-            return;
-        }
-
-        // Add scrolled class when not at top
-        navbar.classList.add('scrolled');
-
-        // Don't hide navbar if mobile menu is open
-        if (isMobileMenuOpen) {
-            navbar.classList.remove('hidden');
-            return;
-        }
-
-        // Handle navbar visibility based on scroll direction
-        if (currentScrollTop > lastScrollTop) {
-            // Scrolling down - hide navbar
-            navbar.classList.add('hidden');
-        } else {
-            // Scrolling up - show navbar
-            navbar.classList.remove('hidden');
-        }
-
-        // Update service section color change
-        const servicesSection = document.querySelector('#services');
-        if (servicesSection) {
-            if (currentScrollTop >= servicesSection.offsetTop - 100) {
-                navbar.classList.add('color-change');
-            } else {
-                navbar.classList.remove('color-change');
-            }
-        }
-
-        lastScrollTop = currentScrollTop;
-    }
-
-    // Throttle scroll events
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateNavbar();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-
-    // Initial navbar state
-    updateNavbar();
-
-    // Update on resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 991) {
-            isMobileMenuOpen = false;
-        }
-        updateNavbar();
-    }, { passive: true });
-
-    // Prevent navbar from hiding when interacting with it
-    navbar.addEventListener('mouseenter', () => {
-        navbar.classList.remove('hidden');
-    });
 });
 
 // Hero section - simplified
