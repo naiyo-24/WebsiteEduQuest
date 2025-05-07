@@ -116,9 +116,7 @@ function loadOpportunities(filter = 'all') {
             <div class="tags-container">
                 ${opp.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
-            <button class="download-btn mt-3" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                Apply Now
-            </button>
+            <a href="#home" class="download-btn mt-3">Apply Now</a>
         </div>
     `).join('');
 
@@ -590,22 +588,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle all download buttons and store badges
     const downloadButtons = document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn, .store-badge');
-    const comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
     
     downloadButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
-            const currentScrollPosition = window.scrollY;
-            comingSoonModal.show();
-
-            // Restore scroll position after modal is closed
-            document.getElementById('comingSoonModal').addEventListener('hidden.bs.modal', () => {
-                window.scrollTo(0, currentScrollPosition);
-            }, { once: true });
+            window.location.href = '#home';
         });
     });
 
-    // ...existing code...
+    // Handle About Us cards
+    document.querySelectorAll('.about-box').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '#home';
+        });
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function() {
