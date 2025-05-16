@@ -724,4 +724,112 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(heroWrapper);
 });
 
-// ...existing code...
+// Contact Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm) return;
+
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const buttonText = submitButton.innerHTML;
+
+        // Validate required fields
+        const requiredFields = {
+            'full_name': 'fullName',
+            'email': 'emailAddress',
+            'phone': 'phoneNumber',
+            'subject': 'subject',
+            'message': 'message',
+            'user_type': 'userType'
+        };
+
+        const formData = new FormData();
+
+        // Check and append required fields
+        for (const [apiField, elementId] of Object.entries(requiredFields)) {
+            const value = document.getElementById(elementId)?.value?.trim();
+            if (!value) {
+                alert(`Please fill in the ${apiField.replace('_', ' ')}`);
+                return;
+            }
+            formData.append(apiField, value);
+        }
+
+        // Phone validation
+        const phone = document.getElementById('phoneNumber').value.trim();
+        if (!/^\d{10}$/.test(phone)) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
+
+        // Email validation
+        const email = document.getElementById('emailAddress').value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        // Optional fields
+        const course = document.getElementById('course').value.trim();
+        if (course) {
+            formData.append('course_or_class', course);
+        }
+
+        const preferredTime = document.getElementById('preferredTime').value;
+        if (preferredTime) {
+            formData.append('preferred_contact_time', preferredTime);
+        }
+
+        // File attachment
+        const attachment = document.getElementById('attachment');
+        if (attachment?.files[0]) {
+            if (attachment.files[0].size > 5 * 1024 * 1024) {
+                alert('File size should not exceed 5MB');
+                return;
+            }
+            formData.append('attachment', attachment.files[0]);
+        }
+
+        try {
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Sending...';
+
+            const response = await fetch('https://eduquest.naiyo24.com/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.status === 201) {
+                alert('Thank you! Your message has been sent successfully.');
+                contactForm.reset();
+            } else {
+                throw new Error(result.message || 'Please check all required fields and try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while sending your message. Please try again.');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = buttonText;
+        }
+    });
+
+    // File input validation on change
+    const attachment = document.getElementById('attachment');
+    if (attachment) {
+        attachment.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.size > 5 * 1024 * 1024) {
+                alert('File size should not exceed 5MB');
+                this.value = '';
+            }
+        });
+    }
+});

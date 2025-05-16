@@ -464,7 +464,98 @@
         </div>
     </section>
 
-    <footer id="contact">
+    <section id="contact" class="modern-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Contact Us</span>
+                <h2 class="section-title display-4 fw-bold mb-4">Get in Touch</h2>
+                <p class="section-subtitle lead text-muted mx-auto" style="max-width: 800px;">
+                    Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                </p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="contact-form-card">
+                        <form id="contactForm" class="contact-form" enctype="multipart/form-data">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="fullName" placeholder="Your Name" required>
+                                        <label for="fullName">Full Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="emailAddress" placeholder="Your Email" required>
+                                        <label for="emailAddress">Email Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                                        <label for="phoneNumber">Phone Number *</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="subject" placeholder="Subject" required>
+                                        <label for="subject">Subject / Reason for Contact</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="message" placeholder="Your Message" style="height: 150px" required></textarea>
+                                        <label for="message">Message / Description</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="userType" required>
+                                            <option value="" selected disabled>Select user type</option>
+                                            <option value="Student">Student</option>
+                                            <option value="Parent">Parent</option>
+                                            <option value="Organization">Organization</option>
+                                            <option value="College">College</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <label for="userType">User Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="course" placeholder="Course (Optional)">
+                                        <label for="course">Course or Class (Optional)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="preferredTime">
+                                            <option value="" selected disabled>Select preferred time</option>
+                                            <option value="Morning">Morning (9 AM - 12 PM)</option>
+                                            <option value="Afternoon">Afternoon (12 PM - 4 PM)</option>
+                                            <option value="Evening">Evening (4 PM - 8 PM)</option>
+                                        </select>
+                                        <label for="preferredTime">Preferred Contact Time (Optional)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-control-file">
+                                        <label for="attachment" class="form-label">Attachment (Optional)</label>
+                                        <input type="file" class="form-control" id="attachment">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
