@@ -724,6 +724,184 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(heroWrapper);
 });
 
+// Contact Form Handler with Enhanced Validation
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm) return;
+
+    // Custom form validation styles
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    // Add custom validation classes on input
+    const inputs = contactForm.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const buttonText = submitButton.querySelector('span');
+        const spinner = submitButton.querySelector('.spinner-border');
+        const originalText = buttonText.textContent;
+
+        // Validate all fields first
+        let isValid = true;
+        const requiredFields = {
+            'full_name': 'fullName',
+            'email': 'emailAddress',
+            'phone': 'phoneNumber',
+            'subject': 'subject',
+            'message': 'message',
+            'user_type': 'userType'
+        };
+
+        // Reset previous validation states
+        inputs.forEach(input => {
+            input.classList.remove('is-invalid');
+        });
+
+        // Custom validation
+        for (const [apiField, elementId] of Object.entries(requiredFields)) {
+            const element = document.getElementById(elementId);
+            const value = element?.value?.trim();
+            
+            if (!value) {
+                element.classList.add('is-invalid');
+                isValid = false;
+                continue;
+            }
+
+            // Specific field validations
+            switch(elementId) {
+                case 'emailAddress':
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        element.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    break;
+                case 'phoneNumber':
+                    if (!/^\d{10}$/.test(value)) {
+                        element.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    break;
+                case 'message':
+                    if (value.length < 20) {
+                        element.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    break;
+            }
+        }
+
+        if (!isValid) {
+            // Scroll to the first invalid field
+            const firstInvalid = contactForm.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+
+        const formData = new FormData(contactForm);
+
+        // File validation
+        const attachment = document.getElementById('attachment');
+        if (attachment?.files[0]) {
+            if (attachment.files[0].size > 5 * 1024 * 1024) {
+                attachment.classList.add('is-invalid');
+                const feedback = attachment.parentElement.querySelector('.invalid-feedback') || 
+                               attachment.parentElement.querySelector('.text-muted');
+                if (feedback) feedback.textContent = 'File size should not exceed 5MB';
+                return;
+            }
+        }
+
+        try {
+            // Show loading state
+            submitButton.disabled = true;
+            buttonText.textContent = 'Sending...';
+            spinner.classList.remove('d-none');
+
+            const response = await fetch('https://eduquest.naiyo24.com/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.status === 201) {
+                // Success feedback
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank You!',
+                    text: 'Your message has been sent successfully.',
+                    confirmButtonColor: '#0d6efd'
+                });
+                contactForm.reset();
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid');
+                });
+            } else {
+                throw new Error(result.message || 'Please check all required fields and try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Error feedback
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'An error occurred while sending your message. Please try again.',
+                confirmButtonColor: '#0d6efd'
+            });
+        } finally {
+            // Reset button state
+            submitButton.disabled = false;
+            buttonText.textContent = originalText;
+            spinner.classList.add('d-none');
+        }
+    });
+
+    // File input validation and preview
+    const attachment = document.getElementById('attachment');
+    if (attachment) {
+        attachment.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const feedback = this.parentElement.querySelector('.text-muted');
+            
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    this.value = '';
+                    this.classList.add('is-invalid');
+                    feedback.textContent = 'File size should not exceed 5MB';
+                    feedback.classList.remove('text-muted');
+                    feedback.classList.add('text-danger');
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                    feedback.textContent = `Selected file: ${file.name}`;
+                    feedback.classList.remove('text-danger');
+                    feedback.classList.add('text-muted');
+                }
+            }
+        });
+    }
+});
+
 // Contact Form Handler
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
@@ -733,7 +911,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const submitButton = this.querySelector('button[type="submit"]');
-        const buttonText = submitButton.innerHTML;
+        const buttonSpan = submitButton.querySelector('span') || submitButton;
+        const originalText = buttonSpan.textContent;
 
         // Validate required fields
         const requiredFields = {
@@ -794,7 +973,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             submitButton.disabled = true;
-            submitButton.innerHTML = 'Sending...';
+            buttonSpan.textContent = 'Sending...';
 
             const response = await fetch('https://eduquest.naiyo24.com/api/contact', {
                 method: 'POST',
@@ -807,17 +986,38 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
 
             if (response.status === 201) {
-                alert('Thank you! Your message has been sent successfully.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank you!',
+                    text: 'Your message has been sent successfully.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    customClass: {
+                        popup: 'animated fadeInDown'
+                    }
+                });
                 contactForm.reset();
+                // Remove valid classes from inputs
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.classList.remove('is-valid');
+                });
             } else {
                 throw new Error(result.message || 'Please check all required fields and try again.');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message || 'An error occurred while sending your message. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'An error occurred while sending your message. Please try again.',
+                confirmButtonColor: '#1a73e8',
+                customClass: {
+                    popup: 'animated fadeInDown'
+                }
+            });
         } finally {
             submitButton.disabled = false;
-            submitButton.innerHTML = buttonText;
+            buttonSpan.textContent = originalText;
         }
     });
 
