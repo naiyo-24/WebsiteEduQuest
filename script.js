@@ -1,10 +1,14 @@
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+// Handle navigation - only prevent default for actual anchor links
+document.querySelectorAll('a').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+        const href = this.getAttribute('href');
+        // Only handle anchor links, let other links work normally
+        if (href && href.startsWith('#')) {
+            e.preventDefault();
+            document.querySelector(href).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
     });
 });
 
@@ -12,7 +16,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const defaultImage = 'data:image/svg+xml,' + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
         <rect width="200" height="200" fill="#f0f0f0"/>
-        <text x="50%" y="50%" font-size="24" fill="#666" text-anchor="middle" dy=".3em">No Image</text>
+        <text x="50document.addEventListener('DOMContentLoaded', function() {
+    // Initialize only interactive UI elements
+});="24" fill="#666" text-anchor="middle" dy=".3em">No Image</text>
     </svg>
 `);
 
@@ -116,7 +122,9 @@ function loadOpportunities(filter = 'all') {
             <div class="tags-container">
                 ${opp.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
-            <a href="#home" class="download-btn mt-3">Apply Now</a>
+            <a href="/web/" class="download-btn mt-3">
+                Apply Now
+            </a>
         </div>
     `).join('');
 
@@ -145,8 +153,8 @@ const teamMembers = [
     { 
         name: 'Debasish Baidya', 
         role: 'CEO & Founder', 
-        image: 'debasish.png',
-        quote: `As the CEO and Founder of EduQuest247, I envision a future where education transcends traditional boundaries. We're pioneering a revolutionary approach to learning and career development through cutting-edge technology and innovation. Our platform is not just a tool; it's a gateway to unlimited possibilities, connecting talented individuals with life-changing opportunities across the globe. What sets us apart is our commitment to democratizing education. We understand that every student has unique potential, and our platform adapts to individual learning styles, making quality education accessible to all. By fostering strong partnerships with leading industries and educational institutions, we're building a robust ecosystem where academic excellence meets real-world opportunities. Our vision extends beyond just providing resources; we're creating a community where students can discover their passions, develop their skills, and connect with mentors who can guide them toward success. Whether it's through internships, job placements, or higher education opportunities, we're dedicated to being the catalyst that transforms aspirations into achievements. Join us in this transformative journey as we reshape the landscape of education and career development. Together, we're not just preparing students for the future; we're empowering them to create it."`,
+        image: 'debasish_b.jpeg',
+        quote: `As the CEO and Founder of EduQuest 247, I envision a future where education transcends traditional boundaries. We're pioneering a revolutionary approach to learning and career development through cutting-edge technology and innovation. Our platform is not just a tool; it's a gateway to unlimited possibilities, connecting talented individuals with life-changing opportunities across the globe. What sets us apart is our commitment to democratizing education. We understand that every student has unique potential, and our platform adapts to individual learning styles, making quality education accessible to all. By fostering strong partnerships with leading industries and educational institutions, we're building a robust ecosystem where academic excellence meets real-world opportunities. Our vision extends beyond just providing resources; we're creating a community where students can discover their passions, develop their skills, and connect with mentors who can guide them toward success. Whether it's through internships, job placements, or higher education opportunities, we're dedicated to being the catalyst that transforms aspirations into achievements. Join us in this transformative journey as we reshape the landscape of education and career development. Together, we're not just preparing students for the future; we're empowering them to create it."`,
         social: {
             linkedin: 'https://www.linkedin.com/in/debasish-baidya-a63297347/',
             twitter: 'https://x.com/DebasishNaiyo24',
@@ -306,6 +314,13 @@ function initReviewsCarousel() {
     const cards = document.querySelectorAll('.review-card');
     const prevBtn = document.querySelector('.review-nav-btn.prev');
     const nextBtn = document.querySelector('.review-nav-btn.next');
+    
+    // Return early if required elements are not found
+    if (!carousel || !cards.length || !prevBtn || !nextBtn) {
+        console.log('Review carousel elements not found');
+        return;
+    }
+
     let currentIndex = 0;
 
     function updateCarousel() {
@@ -379,89 +394,82 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Navbar scroll effect
-    const navbar = document.querySelector('.navbar');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    let lastScrollTop = 0;
-    let isMobileMenuOpen = false;
-    
-    // Track mobile menu state
-    if (navbarCollapse) {
-        navbarCollapse.addEventListener('show.bs.collapse', () => {
-            isMobileMenuOpen = true;
-            navbar.classList.remove('hidden');
-        });
+    // const navbar = document.querySelector('.navbar'); // Removed duplicate declaration
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
 
-        navbarCollapse.addEventListener('hide.bs.collapse', () => {
-            isMobileMenuOpen = false;
-        });
-    }
-
-    function updateNavbar() {
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Always show navbar at top of page
-        if (currentScrollTop <= 0) {
-            navbar.classList.remove('hidden', 'scrolled');
-            return;
-        }
-
-        // Add scrolled class when not at top (only affects padding)
-        navbar.classList.add('scrolled');
-
-        // Don't hide navbar if mobile menu is open
-        if (isMobileMenuOpen) {
-            navbar.classList.remove('hidden');
-            return;
-        }
-
-        // Handle navbar visibility based on scroll direction
-        if (currentScrollTop > lastScrollTop) {
-            // Scrolling down - hide navbar
-            navbar.classList.add('hidden');
-        } else {
-            // Scrolling up - show navbar
-            navbar.classList.remove('hidden');
-        }
-
-        lastScrollTop = currentScrollTop;
-    }
-
-    // Throttle scroll events
-    let ticking = false;
     window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateNavbar();
-                ticking = false;
-            });
-            ticking = true;
+        const homeSection = document.querySelector('#home');
+        const scrollPosition = window.scrollY;
+        const navbar = document.querySelector('.navbar');
+        
+        // Add/remove scrolled class and color-change class
+        if (scrollPosition > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
         }
-    }, { passive: true });
 
-    // Initial navbar state
-    updateNavbar();
-
-    // Update on resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 991) {
-            isMobileMenuOpen = false;
+        // Change navbar color after about us section
+        const aboutSection = document.querySelector('#aboutus');
+        if (aboutSection && scrollPosition >= (aboutSection.offsetTop - 100)) {
+            navbar.classList.add('color-change');
+        } else {
+            navbar.classList.remove('color-change');
         }
-        updateNavbar();
-    }, { passive: true });
 
-    // Prevent navbar from hiding when interacting with it
-    navbar.addEventListener('mouseenter', () => {
-        navbar.classList.remove('hidden');
+        // Update active nav link based on scroll position
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollPosition >= sectionTop - 60) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === current) {
+                link.classList.add('active');
+            }
+        });
     });
 
     // Close mobile menu on link click
-    const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
+            const navbarCollapse = document.querySelector('.navbar-collapse');
             if (navbarCollapse.classList.contains('show')) {
-                bootstrap.Collapse.getInstance(navbarCollapse).hide();
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(navbarCollapse);
+                if (bsCollapse) {
+                    bsCollapse.hide();
+                }
             }
         });
+    });
+
+    // Add scroll direction detection
+    let lastScroll = 0;
+    const navbar = document.querySelector('.navbar');
+    
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        // Determine scroll direction and toggle navbar
+        if (currentScroll <= 0) {
+            navbar.classList.remove('hidden');
+            return;
+        }
+        
+        if (currentScroll > lastScroll && !navbar.classList.contains('hidden')) {
+            // Scrolling down
+            navbar.classList.add('hidden');
+        } else if (currentScroll < lastScroll && navbar.classList.contains('hidden')) {
+            // Scrolling up
+            navbar.classList.remove('hidden');
+        }
+        
+        lastScroll = currentScroll;
     });
 });
 
@@ -482,10 +490,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (entry.isIntersecting) {
                 setTimeout(() => {
                     entry.target.classList.add('visible');
-                }, index * 150); // Increased delay between items
+                }, index * 150);
             }
         });
-    }, { threshold: 0.2 }); // Reduced threshold for earlier trigger
+    }, { threshold: 0.2 });
 
     featureItems.forEach(item => observer.observe(item));
     
@@ -498,30 +506,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Smooth scroll for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // Smooth scroll only for navigation links
+    const navLinks = document.querySelectorAll('.navbar .nav-link');
+    navLinks.forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const targetElement = document.querySelector(href);
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            }
         });
     });
 
     // Floating app button visibility
     const floatingBtn = document.querySelector('.floating-app-btn');
-    let lastScroll = 0;
-
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll > lastScroll && currentScroll > 500) {
-            floatingBtn.style.transform = 'translateY(100px)';
-        } else {
-            floatingBtn.style.transform = 'translateY(0)';
-        }
-        lastScroll = currentScroll;
-    });
+    if (floatingBtn) {
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (floatingBtn) {
+                if (currentScroll > lastScroll && currentScroll > 500) {
+                    floatingBtn.style.transform = 'translateY(100px)';
+                } else {
+                    floatingBtn.style.transform = 'translateY(0)';
+                }
+            }
+            lastScroll = currentScroll;
+        });
+    }
 });
 
 // Service pages initialization
@@ -594,70 +611,97 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // ...existing initialization code...
-    
-    // Handle all download buttons and store badges
-    const downloadButtons = document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn, .store-badge');
-    
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = '#home';
-        });
-    });
-
-    // Handle About Us cards
-    document.querySelectorAll('.about-box').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = '#home';
-        });
-    });
+    // Initialize basic UI elements without interfering with navigation
 });
 
+// Event listeners removed to allow proper link navigation
+
+// Initialize navbar handling
 document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-
-    // Handle all download buttons
-    const downloadButtons = document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn');
-    const comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
+    const navbar = document.querySelector('.navbar');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    let lastScrollTop = 0;
+    let isMobileMenuOpen = false;
     
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            comingSoonModal.show();
+    // Track mobile menu state
+    if (navbarCollapse) {
+        navbarCollapse.addEventListener('show.bs.collapse', () => {
+            isMobileMenuOpen = true;
+            navbar.classList.remove('hidden');
         });
-    });
-});
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize modal
-    const comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
-    
-    // Add click handlers for all download buttons
-    document.querySelectorAll('.btn-primary, .floating-app-btn, .store-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            comingSoonModal.show();
+        navbarCollapse.addEventListener('hide.bs.collapse', () => {
+            isMobileMenuOpen = false;
         });
+    }
+
+    function updateNavbar() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Always show navbar at top of page
+        if (currentScrollTop <= 0) {
+            navbar.classList.remove('hidden', 'scrolled');
+            return;
+        }
+
+        // Add scrolled class when not at top
+        navbar.classList.add('scrolled');
+
+        // Don't hide navbar if mobile menu is open
+        if (isMobileMenuOpen) {
+            navbar.classList.remove('hidden');
+            return;
+        }
+
+        // Handle navbar visibility based on scroll direction
+        if (currentScrollTop > lastScrollTop) {
+            // Scrolling down - hide navbar
+            navbar.classList.add('hidden');
+        } else {
+            // Scrolling up - show navbar
+            navbar.classList.remove('hidden');
+        }
+
+        // Update service section color change
+        const servicesSection = document.querySelector('#services');
+        if (servicesSection) {
+            if (currentScrollTop >= servicesSection.offsetTop - 100) {
+                navbar.classList.add('color-change');
+            } else {
+                navbar.classList.remove('color-change');
+            }
+        }
+
+        lastScrollTop = currentScrollTop;
+    }
+
+    // Throttle scroll events
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateNavbar();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+
+    // Initial navbar state
+    updateNavbar();
+
+    // Update on resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 991) {
+            isMobileMenuOpen = false;
+        }
+        updateNavbar();
+    }, { passive: true });
+
+    // Prevent navbar from hiding when interacting with it
+    navbar.addEventListener('mouseenter', () => {
+        navbar.classList.remove('hidden');
     });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-
-    // Initialize modal for About Us cards
-    const comingSoonModal = new bootstrap.Modal(document.getElementById('comingSoonModal'));
-    
-    // Add click handlers for About Us cards
-    document.querySelectorAll('.about-box').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            comingSoonModal.show();
-        });
-    });
-
-    // ...existing code...
 });
 
 // Hero section - simplified
